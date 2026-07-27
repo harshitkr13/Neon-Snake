@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Premium Snake Game — a modern browser game with power-ups, neon visuals, and smooth gameplay." />
+  <title>Neon Snake — Premium Edition</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Animated background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+  <div class="bg-gradient-orb orb1"></div>
+  <div class="bg-gradient-orb orb2"></div>
+  <div class="bg-gradient-orb orb3"></div>
+
+  <!-- Main wrapper -->
+  <div class="game-wrapper">
+
+    <!-- Header -->
+    <header class="game-header">
+      <div class="logo">
+        <span class="logo-icon">🐍</span>
+        <span class="logo-text">Neon<strong>Snake</strong></span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main content area -->
+    <main class="game-main">
+
+      <!-- Left Stats Panel -->
+      <aside class="stats-panel left-panel">
+        <div class="stat-card" id="scoreCard">
+          <div class="stat-label">Score</div>
+          <div class="stat-value" id="scoreDisplay">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">High Score</div>
+          <div class="stat-value high-score-val" id="highScoreDisplay">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Level</div>
+          <div class="stat-value" id="levelDisplay">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Difficulty</div>
+          <div class="stat-value difficulty-val" id="difficultyDisplay">Easy</div>
+        </div>
+
+        <!-- Active Power-ups -->
+        <div class="powerup-status" id="powerupStatus">
+          <div class="stat-label">Active Power-ups</div>
+          <div class="powerup-list" id="powerupList">
+            <span class="no-powerup">None</span>
+          </div>
+        </div>
+
+        <!-- Controls hint -->
+        <div class="controls-hint">
+          <div class="stat-label">Controls</div>
+          <div class="controls-list">
+            <span>↑↓←→ / WASD</span>
+            <span>P — Pause</span>
+            <span>R — Restart</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Game Canvas Area -->
+      <div class="canvas-container">
+        <div class="canvas-glow"></div>
+        <div class="game-canvas-wrap" id="gameCanvasWrap">
+          <canvas id="gameCanvas"></canvas>
+          <!-- Floating notifications overlay -->
+          <div class="notifications-overlay" id="notificationsOverlay"></div>
+        </div>
+
+        <!-- Game control buttons below canvas -->
+        <div class="game-controls">
+          <button class="ctrl-btn start-btn" id="startBtn">
+            <span class="btn-icon">▶</span>
+            <span>Start Game</span>
+          </button>
+          <button class="ctrl-btn pause-btn" id="pauseBtn" disabled>
+            <span class="btn-icon">⏸</span>
+            <span id="pauseLabel">Pause</span>
+          </button>
+          <button class="ctrl-btn restart-btn" id="restartBtn" disabled>
+            <span class="btn-icon">↺</span>
+            <span>Restart</span>
+          </button>
+        </div>
+
+        <!-- Mobile swipe hint -->
+        <div class="swipe-hint" id="swipeHint">Swipe to control on mobile</div>
+      </div>
+
+      <!-- Right Legend Panel -->
+      <aside class="stats-panel right-panel">
+        <div class="legend-card">
+          <div class="stat-label">Legend</div>
+          <div class="legend-list">
+            <div class="legend-item">
+              <span class="legend-dot food-dot"></span>
+              <span>Food (+10)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot powerup-dot star-dot"></span>
+              <span>⭐ Double Score</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot powerup-dot bolt-dot"></span>
+              <span>⚡ Speed Boost</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot powerup-dot shield-dot"></span>
+              <span>🛡 Shield</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-card">
+          <div class="stat-label">Speed Chart</div>
+          <div class="speed-list">
+            <div class="speed-item"><span class="speed-level">Lv 1</span><span>180ms</span></div>
+            <div class="speed-item"><span class="speed-level">Lv 2</span><span>160ms</span></div>
+            <div class="speed-item"><span class="speed-level">Lv 3</span><span>140ms</span></div>
+            <div class="speed-item"><span class="speed-level">Lv 4</span><span>120ms</span></div>
+            <div class="speed-item"><span class="speed-level">Lv 5+</span><span>100ms+</span></div>
+          </div>
+        </div>
+
+        <div class="legend-card tips-card">
+          <div class="stat-label">Tips</div>
+          <ul class="tips-list">
+            <li>Eat power-ups for bonuses!</li>
+            <li>Shield protects you once</li>
+            <li>Double score stacks!</li>
+            <li>Speed increases per level</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- ======= OVERLAYS ======= -->
+
+  <!-- Welcome / Start Screen Overlay -->
+  <div class="overlay" id="welcomeOverlay">
+    <div class="overlay-card welcome-card">
+      <div class="overlay-snake-icon">🐍</div>
+      <h1 class="overlay-title">Neon<strong>Snake</strong></h1>
+      <p class="overlay-subtitle">Premium Edition</p>
+      <div class="overlay-features">
+        <span>⚡ Power-ups</span>
+        <span>🎵 Sound FX</span>
+        <span>🏆 High Scores</span>
+        <span>✨ Particles</span>
+      </div>
+      <button class="overlay-btn primary-btn" id="welcomeStartBtn">
+        ▶ &nbsp;Play Now
+      </button>
+      <button class="overlay-btn secondary-btn" id="welcomeSettingsBtn">
+        ⚙ &nbsp;Settings
+      </button>
+      <div class="overlay-hint">Press <kbd>Space</kbd> or <kbd>Enter</kbd> to start</div>
+    </div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div class="overlay hidden" id="gameOverOverlay">
+    <div class="overlay-card gameover-card">
+      <div class="gameover-icon">💀</div>
+      <h2 class="overlay-title">Game Over</h2>
+      <div class="gameover-stats">
+        <div class="go-stat">
+          <span class="go-label">Your Score</span>
+          <span class="go-value" id="goScore">0</span>
+        </div>
+        <div class="go-stat">
+          <span class="go-label">High Score</span>
+          <span class="go-value accent" id="goHighScore">0</span>
+        </div>
+        <div class="go-stat">
+          <span class="go-label">Level Reached</span>
+          <span class="go-value" id="goLevel">1</span>
+        </div>
+      </div>
+      <div class="new-record hidden" id="newRecordBadge">🏆 New High Score!</div>
+      <button class="overlay-btn primary-btn" id="playAgainBtn">
+        ↺ &nbsp;Play Again
+      </button>
+      <button class="overlay-btn secondary-btn" id="goMenuBtn">
+        ⌂ &nbsp;Main Menu
+      </button>
+    </div>
+  </div>
+
+  <!-- Pause Overlay -->
+  <div class="overlay hidden" id="pauseOverlay">
+    <div class="overlay-card pause-card">
+      <div class="pause-icon">⏸</div>
+      <h2 class="overlay-title">Paused</h2>
+      <p class="overlay-subtitle">Game is paused</p>
+      <button class="overlay-btn primary-btn" id="resumeBtn">
+        ▶ &nbsp;Resume
+      </button>
+      <button class="overlay-btn secondary-btn" id="pauseRestartBtn">
+        ↺ &nbsp;Restart
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="overlay hidden" id="settingsOverlay">
+    <div class="overlay-card settings-card">
+      <div class="settings-header">
+        <h2 class="overlay-title">Settings</h2>
+        <button class="icon-btn close-btn" id="closeSettingsBtn" aria-label="Close Settings">✕</button>
+      </div>
+
+      <!-- Sound Toggle -->
+      <div class="setting-row">
+        <span class="setting-label">🔊 Sound Effects</span>
+        <label class="toggle-switch" for="soundToggle">
+          <input type="checkbox" id="soundToggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Grid Toggle -->
+      <div class="setting-row">
+        <span class="setting-label">⊞ Show Grid</span>
+        <label class="toggle-switch" for="gridToggle">
+          <input type="checkbox" id="gridToggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="setting-row col">
+        <span class="setting-label">🎮 Difficulty</span>
+        <div class="option-group" id="difficultyGroup">
+          <button class="option-btn active" data-value="easy">Easy</button>
+          <button class="option-btn" data-value="medium">Medium</button>
+          <button class="option-btn" data-value="hard">Hard</button>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="setting-row col">
+        <span class="setting-label">🎨 Theme</span>
+        <div class="option-group" id="themeGroup">
+          <button class="option-btn theme-btn active" data-value="green" style="--theme-c: #00ff88;">🟢 Neon Green</button>
+          <button class="option-btn theme-btn" data-value="blue" style="--theme-c: #00c6ff;">🔵 Blue</button>
+          <button class="option-btn theme-btn" data-value="purple" style="--theme-c: #b967ff;">🟣 Purple</button>
+        </div>
+      </div>
+
+      <button class="overlay-btn primary-btn" id="saveSettingsBtn">Save Settings</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
